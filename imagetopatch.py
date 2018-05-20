@@ -139,4 +139,4 @@ if __name__ == "__main__":
     im2 = createPortraitCollage(strip, im1, testing=False, testSize=5)
 
     im2.show()
-    im2.save("im1.png")
+    #im2.save("im1.png")
