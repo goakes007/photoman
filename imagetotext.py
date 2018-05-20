@@ -97,7 +97,7 @@ def createSymbilPhotoDirectory(inDirectory, grade=config.default_grade,
 # ---------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    im0 = PIL.Image.open('photos/test/g.png')   # small
+    im0 = PIL.Image.open('photos/test/g2.png')   # small
 
     im1 = createSymbilPhoto(im0, grade=config.GREY, testing=False, testSize=1)
 
