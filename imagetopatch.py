@@ -109,7 +109,8 @@ def getStrip(directory, size, recreate=False):
     :param size: number of pixels per photo to add to strip
     :return: The strip
     """
-    stripFile = "strips/"+directory+"_"+str(size)+".png"
+    d2 = directory.replace("/","_")
+    stripFile = "strips/"+d2+"_"+str(size)+".png"
     print("stripFile:{}".format(stripFile))
     if recreate==False:
         try:
@@ -129,13 +130,13 @@ def getStrip(directory, size, recreate=False):
 # ---------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    strip = getStrip('images2',12)  # get image
+    strip = getStrip('photos/cardsuits',8)  # get image
     #strip.show()
     #quit()
 
-    im1 = Image.open('work/lea.png')  # get image
+    im1 = Image.open('photos/test/nancy_large.jpg')  # get image
 
-    im2 = createPortraitCollage(strip, im1, testing=True, testSize=5)
+    im2 = createPortraitCollage(strip, im1, testing=False, testSize=5)
 
     im2.show()
-    #im2.save("im1.png")
+    im2.save("im1.png")

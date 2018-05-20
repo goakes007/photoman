@@ -54,6 +54,34 @@ def createImageStrip(directory, imageSize):
         image.paste(toAddImage, box=(i*imageSize, 0))
     return image
 
+def splitImage(folder, image, x_images, y_images):
+    """
+    Split an image and store the resulting images into the folder
+    :param folder: Where the images should be stored
+    :param image: The initial image to break up
+    :param x: The number of images in the x direction
+    :param y: The number of images in the y direction
+    :return: nothing
+    """
+
+    # Number of occurrances of letters depends on image size
+    (ix,iy) = image.size
+    ixf = int(ix/x_images)
+    iyf = int(iy/y_images)
+
+    outDirectory = "{}_split".format(folder)
+    if not os.path.exists(outDirectory): os.makedirs(outDirectory)
+
+    for y in range(y_images):
+        for x in range(x_images):
+            sx = x * ixf
+            sy = y * iyf
+            slice = image.crop(box=(sx, sy, sx+ixf-1, sy+iyf-1))
+            fileName = "{}/image_x{}_y{}.png".format(outDirectory, x, y)
+            slice.save(fileName)
+
+
+
 def getColor(image):
     """
     Get the average color across the whole image
@@ -143,9 +171,13 @@ def findoffset(character_set, image):
 # ---------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    directory = "images2"
-    size = 12
+    directory = "photos/cards_split"
+    size = 100
     image = createImageStrip(directory, size)
     image.show()
     saveName = "{}{}.png".format(directory,size)
     image.save(saveName)
+
+    # Split an image
+    # image = PIL.Image.open('photos/cards/deck.png')
+    # splitImage("photos/cards",image,13,4)
