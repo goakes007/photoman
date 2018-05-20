@@ -1,7 +1,9 @@
 import os, PIL
 import imagetools
+import config
 
-def createSymbilPhoto(image, color=False, testing=False, testSize=3):
+def createSymbilPhoto(image, grade=config.default_grade,
+                      testing=config.default_testing, testSize=3):
     # Number of occurrances of letters depends on image size
     font_x = imagetools.font_x
     font_y = imagetools.font_y
@@ -47,13 +49,24 @@ def createSymbilPhoto(image, color=False, testing=False, testSize=3):
                 draw.rectangle((sx,sy,sx+font_x-1,sy+font_y-1), fill=1)
                 imsym = im_cs.crop( box=(os*font_x,0,os*font_x+font_x,font_y) )
                 imnew.paste(imsym,box=(sx,sy))
-                if color:
+                if grade == config.BLACKANDWHITE:
+                    # That's what we've created
+                    pass
+                elif grade == config.COLOR:
                     imbox = image.crop(box=(sx, sy, sx + font_x, sy + font_y))
                     boxcolor = imagetools.getColor(imbox)
                     imagetools.setColor(imnew,boxcolor,((sx,sy,sx+font_x-1,sy+font_y-1)))
+                else:   # grey scale
+                    imbox = image.crop(box=(sx, sy, sx + font_x, sy + font_y))
+                    boxcolor = imagetools.getColor(imbox)
+                    grey = int((boxcolor[0]+boxcolor[1]+boxcolor[2])/3)
+                    boxcolor = (grey,grey,grey,255)
+                    imagetools.setColor(imnew,boxcolor,((sx,sy,sx+font_x-1,sy+font_y-1)))
+
     return imnew
 
-def createSymbilPhotoDirectory(inDirectory, color=False, testing=False, testSize=3):
+def createSymbilPhotoDirectory(inDirectory, grade=config.default_grade,
+                               testing=config.default_testing, testSize=3):
     """
     create new symbol images from photos found in folder.
     :param directory: where to pull the images from
@@ -62,8 +75,9 @@ def createSymbilPhotoDirectory(inDirectory, color=False, testing=False, testSize
 
     imageFiles = [f for f in os.listdir(inDirectory) if os.path.isfile(os.path.join(inDirectory, f))]
     print(imageFiles)
-    if color: outDirectory = inDirectory + "_sym_col"
-    else:     outDirectory = inDirectory + "_sym_bw"
+    if   grade==config.COLOR: outDirectory = inDirectory + "_sym_col"
+    elif grade==config.GREY:  outDirectory = inDirectory + "_sym_grey"
+    else:                     outDirectory = inDirectory + "_sym_bw"
     if not os.path.exists(outDirectory): os.makedirs(outDirectory)
 
     for i in range(len(imageFiles)):
@@ -71,7 +85,7 @@ def createSymbilPhotoDirectory(inDirectory, color=False, testing=False, testSize
         imageOutFile = outDirectory + "/" + imageFiles[i]
         print("Add {} named {}".format(i, imageOutFile))
         inImage  = PIL.Image.open(imageInFile)
-        outImage = createSymbilPhoto(inImage, color, testing, testSize)
+        outImage = createSymbilPhoto(inImage, grade, testing, testSize)
         #outImage.show()
         outImage.save(imageOutFile)
 
@@ -83,15 +97,9 @@ def createSymbilPhotoDirectory(inDirectory, color=False, testing=False, testSize
 # ---------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    #im0 = Image.open('gn800x800.png')      # get image
-    #im0 = Image.open('gas.png')            # get image
-    #im0 = Image.open('g.png')              # get image
-    #im0 = Image.open('images/j1.png')      # get image
-    #im0 = Image.open('work/group.png')     # get image
-    im0 = PIL.Image.open('cats/download.jpg')   # small
-    #im0 = Image.open('p2.png')             # get image
+    im0 = PIL.Image.open('photos/test/g.png')   # small
 
-    im1 = createSymbilPhoto(im0, testing=False, testSize=1)
+    im1 = createSymbilPhoto(im0, grade=config.GREY, testing=False, testSize=1)
 
     im1.show()
     #im1.save("im1.png")
