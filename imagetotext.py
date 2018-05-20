@@ -11,6 +11,9 @@ def createSymbilPhoto(image, grade=config.default_grade,
     ixf = int(ix/font_x)
     iyf = int(iy/font_y)
     start_x = start_y = 0    # Screen position to do work on
+    new_x_size= (font_x+gap)*ixf
+    new_y_size= (font_y+gap)*iyf
+
 
     # Set up the character set stuff
     im_cs = imagetools.createCharacterSetImage()
@@ -37,7 +40,6 @@ def createSymbilPhoto(image, grade=config.default_grade,
                 sy=y*font_y+start_y
                 imboxbw = imbw.crop( box=(sx,sy,sx+font_x,sy+font_y) )
 
-
                 # Paste pcture back on left
                 if testing:
                     draw.rectangle( (sx-start_x,sy-start_y+50,sx-start_x+font_x-1, sy-start_y+50+font_y-1), fill=1)
@@ -46,22 +48,22 @@ def createSymbilPhoto(image, grade=config.default_grade,
                 # char set based 2
                 os = imagetools.findoffset(im_cs,imboxbw)
                 #print("x:{}, y:{}, char offset:{}, color:{}".format(sx,sy,os,color))
-                draw.rectangle((sx,sy,sx+font_x-1,sy+font_y-1), fill=1)
+                draw.rectangle((new_sx,new_sy,new_sx+font_x-1,new_sy+font_y-1), fill=1)
                 imsym = im_cs.crop( box=(os*font_x,0,os*font_x+font_x,font_y) )
-                imnew.paste(imsym,box=(sx,sy))
+                imnew.paste(imsym,box=(new_sx,new_sy))
                 if grade == config.BLACKANDWHITE:
                     # That's what we've created
                     pass
                 elif grade == config.COLOR:
                     imbox = image.crop(box=(sx, sy, sx + font_x, sy + font_y))
                     boxcolor = imagetools.getColor(imbox)
-                    imagetools.setColor(imnew,boxcolor,((sx,sy,sx+font_x-1,sy+font_y-1)))
+                    imagetools.setColor(imnew,boxcolor,((new_sx,new_sy,new_sx+font_x-1,new_sy+font_y-1)))
                 else:   # grey scale
                     imbox = image.crop(box=(sx, sy, sx + font_x, sy + font_y))
                     boxcolor = imagetools.getColor(imbox)
                     grey = int((boxcolor[0]+boxcolor[1]+boxcolor[2])/3)
                     boxcolor = (grey,grey,grey,255)
-                    imagetools.setColor(imnew,boxcolor,((sx,sy,sx+font_x-1,sy+font_y-1)))
+                    imagetools.setColor(imnew,boxcolor,((new_sx,new_sy,new_sx+font_x-1,new_sy+font_y-1)))
 
     return imnew
 
