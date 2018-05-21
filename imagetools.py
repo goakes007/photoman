@@ -1,5 +1,6 @@
 from PIL import Image,ImageFont, ImageDraw       # PIL version 4 - http://pillow.readthedocs.io/en/4.0.x/
 import os, PIL
+import config
 
 font = ImageFont.load_default()  # all chars sizes are 6,11
 cs_font_x, cs_font_y = font.getsize(" ")
@@ -36,10 +37,11 @@ def createImageStrip(directory, imageSize):
     From a directory pull in all images and convert to one long image of a given size
     All imagines added will be square.
     The total number of images will be the high divided by length.
-    :param directory: where to pull the images from
+    :param directory: where to pull the images from under config.folder
     :param imageSize: the size of each image on the strip
     :return: the resulting image strip
     """
+    directory = config.folder + "/" + directory
     imageFiles = [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]
     print(imageFiles)
 
@@ -57,7 +59,7 @@ def createImageStrip(directory, imageSize):
 def splitImage(folder, image, x_images, y_images):
     """
     Split an image and store the resulting images into the folder
-    :param folder: Where the images should be stored
+    :param folder: Where the images should be stored under folder
     :param image: The initial image to break up
     :param x: The number of images in the x direction
     :param y: The number of images in the y direction
@@ -69,7 +71,7 @@ def splitImage(folder, image, x_images, y_images):
     ixf = int(ix/x_images)
     iyf = int(iy/y_images)
 
-    outDirectory = "{}_split".format(folder)
+    outDirectory = "{}/{}".format(config.folder,folder)
     if not os.path.exists(outDirectory): os.makedirs(outDirectory)
 
     for y in range(y_images):
@@ -81,6 +83,22 @@ def splitImage(folder, image, x_images, y_images):
             slice.save(fileName)
 
 
+def openImage(path):
+    """
+    Open a image file without the extension to the filename.
+    Look in the config.path for the start location
+    :param path: to the image file (without the extension such .png)
+    :return: image
+    """
+    fullpath = config.folder + "/"+ path
+    try:
+        image = PIL.Image.open(fullpath + '.png')
+        return image
+    except:
+        pass
+
+    image = PIL.Image.open(fullpath + '.jpg')
+    return image
 
 def getColor(image):
     """
@@ -171,13 +189,20 @@ def findoffset(character_set, image):
 # ---------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    directory = "photos/cards_split"
-    size = 100
-    image = createImageStrip(directory, size)
-    image.show()
-    saveName = "{}{}.png".format(directory,size)
-    image.save(saveName)
+    # Create an image strip from a directory
+    #directory = "cards_split"
+    #size = 100
+    #image = createImageStrip(directory, size)
+    #image.show()
+    #saveName = "{}{}.png".format(directory,size)
+    #image.save(saveName)
 
     # Split an image
-    # image = PIL.Image.open('photos/cards/deck.png')
-    # splitImage("photos/cards",image,13,4)
+    image = openImage('cards/deck')
+    splitImage("cards_split",image,13,4)
+    #image.show()
+
+    # open an image
+    #image = openImage('cards/deck')
+    #image = openImage('cats/download')
+    #image.show()

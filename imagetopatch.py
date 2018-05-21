@@ -130,7 +130,7 @@ def getStrip(directory, size, recreate=False):
 # ---------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    strip = getStrip('photos/cardsuits',8)  # get image
+    strip = getStrip('cardsuits',8)  # get image
     #strip.show()
     #quit()
 
